@@ -1,3 +1,5 @@
+import 'package:finance/analysisrisk.dart';
+import 'package:finance/dashboard.dart';
 import 'package:finance/login_screen.dart';
 import 'package:finance/registration_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,10 +66,10 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
        
-            initialRoute: '/login',
+            initialRoute: '/',
             routes: {
-              
-              '/login': (context) => LoginPage(key: const Key("LoginScreen")),
+              '/': (context) => PredictionForm(),
+                      '/login': (context) => LoginPage(key: const Key("LoginScreen")),
              
               '/signup': (context) => SignUpPage(key: const Key("RegistrationScreen")),
              

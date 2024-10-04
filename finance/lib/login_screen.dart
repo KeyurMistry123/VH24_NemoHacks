@@ -47,9 +47,9 @@ class _LoginPageState extends State<LoginPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               colors: [
-                Colors.green.shade900,
-                Colors.green.shade900,
-                Colors.green.shade900,
+                Color.fromARGB(0, 44, 33, 9),
+                Color.fromARGB(0, 34, 9, 44),
+                Color.fromARGB(0, 34, 9, 44),
               ],
             ),
           ),
@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 184, 8, 8),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(60),
                         topRight: Radius.circular(60)),
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Color.fromRGBO(225, 95, 27, .3),
+                                    color: Color.fromRGBO(255, 255, 255, 0.29),
                                     blurRadius: 20,
                                     offset: Offset(0, 10),
                                   )

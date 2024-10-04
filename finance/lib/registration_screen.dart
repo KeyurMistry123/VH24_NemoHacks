@@ -38,9 +38,9 @@ class _SignUpPageState extends State<SignUpPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               colors: [
-                Colors.green.shade900,
-                Colors.green.shade800,
-                Colors.green.shade400,
+                Color.fromARGB(0, 44, 33, 9),
+                Color.fromARGB(0, 44, 33, 9),
+                Color.fromARGB(0, 44, 33, 9),
               ],
             ),
           ),
