@@ -1,4 +1,13 @@
+import 'market_trend.dart';
+import 'package:finance/analysisrisk.dart';
+import 'package:finance/chatbot.dart';
+import 'package:finance/questionnaire.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'news.dart';
+import 'updated_stocks.dart';
+import 'analysisrisk.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,7 +19,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Portfolio Manager',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Colors.grey[100],
       ),
       home: PortfolioScreen(),
     );
@@ -23,7 +33,9 @@ class PortfolioScreen extends StatefulWidget {
 }
 
 class _PortfolioScreenState extends State<PortfolioScreen> {
-  // Hardcoded portfolio data with sectors
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   List<PortfolioItem> portfolioItems = [
     PortfolioItem('Apple Inc.', 'AAPL', 50, 180.00, 150.00, 'Technology'),
     PortfolioItem('Tesla Inc.', 'TSLA', 25, 750.00, 800.00, 'Automotive'),
@@ -41,11 +53,105 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   @override
   void initState() {
     super.initState();
+    _fetchTransactions();
     _calculatePortfolioValue();
     _calculateSectorDistribution();
   }
 
-  // Calculate the total portfolio value
+  Future<void> _fetchTransactions() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      final querySnapshot = await _firestore
+          .collection('transactions')
+          .where('userId', isEqualTo: user.uid)
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        setState(() {
+          portfolioItems.add(PortfolioItem(
+            data['symbol'],
+            data['symbol'],
+            data['totalAmountBought'].toInt(),
+            data['totalInvested'] / data['totalAmountBought'],
+            data['totalInvested'] / data['totalAmountBought'],
+            'User Added',
+          ));
+        });
+      }
+
+      _calculatePortfolioValue();
+      _calculateSectorDistribution();
+    }
+  }
+
+  Future<void> _addTransaction() async {
+    String symbol = '';
+    double totalAmountBought = 0;
+    double totalInvested = 0;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add Stock Transaction"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: const InputDecoration(labelText: "Stock Symbol"),
+                onChanged: (value) {
+                  symbol = value;
+                },
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: "Total Amount Bought"),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  totalAmountBought = double.parse(value);
+                },
+              ),
+              TextField(
+                decoration: const InputDecoration(labelText: "Total Invested"),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  totalInvested = double.parse(value);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                User? user = _auth.currentUser;
+                if (user != null) {
+                  final transaction = {
+                    'symbol': symbol,
+                    'totalAmountBought': totalAmountBought,
+                    'totalInvested': totalInvested,
+                    'date': DateTime.now().toIso8601String(),
+                    'userId': user.uid,
+                  };
+
+                  await _firestore.collection('transactions').add(transaction);
+                  Navigator.of(context).pop();
+                  await _fetchTransactions();
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _calculatePortfolioValue() {
     double totalValue = 0;
     for (var item in portfolioItems) {
@@ -56,7 +162,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     });
   }
 
-  // Calculate the distribution of investments by sector
   void _calculateSectorDistribution() {
     sectorDistribution.clear();
     for (var item in portfolioItems) {
@@ -72,46 +177,113 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Portfolio Manager'),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        title: const Text('Portfolio Manager'),
+        backgroundColor: Color.fromARGB(255, 22, 3, 117),
       ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        color: Colors.grey[100],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
-            _buildPortfolioSummary(),
-            SizedBox(height: 16),
-            _buildSectorDistribution(),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: portfolioItems.length,
-                itemBuilder: (context, index) {
-                  return PortfolioCard(portfolioItems[index]);
-                },
+            DrawerHeader(
+              child: Text(
+                'Navigation',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold
+                ),
               ),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 22, 3, 117),
+              ),
+            ),
+            ListTile(
+              title: const Text('Behavioral Analysis'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => QuestionsPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Market Trend Analysis'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => StreamlitWebView3()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Risk Assessment'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => PredictionForm()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Expenses Tracker'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => FinancialAdviceScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Recent News'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => StreamlitWebView4()),
+                );
+              },
             ),
           ],
         ),
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPortfolioSummary(),
+            const SizedBox(height: 16),
+            _buildSectorDistribution(),
+            const SizedBox(height: 16),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: portfolioItems.length,
+              itemBuilder: (context, index) {
+                return PortfolioCard(portfolioItems[index]);
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addTransaction,
+        child: const Icon(Icons.add),
+        backgroundColor: Color.fromARGB(255, 22, 3, 117),
+      ),
     );
   }
 
-  // Portfolio summary displaying total value
   Widget _buildPortfolioSummary() {
     return Container(
-      padding: EdgeInsets.all(16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8.0,
+            blurRadius: 10.0,
             spreadRadius: 2.0,
           ),
         ],
@@ -119,35 +291,32 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Total Portfolio Value',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 18, color: Colors.grey),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             '\$${_portfolioValue.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.indigo),
           ),
         ],
       ),
     );
   }
 
-  // Sector distribution of the portfolio
   Widget _buildSectorDistribution() {
     return Container(
-      padding: EdgeInsets.all(16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8.0,
+            blurRadius: 10.0,
             spreadRadius: 2.0,
           ),
         ],
@@ -155,28 +324,23 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Sector Distribution',
-            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 18, color: Colors.grey),
           ),
-          SizedBox(height: 8),
-          Column(
-            children: sectorDistribution.entries.map((entry) {
-              return Row(
+          const SizedBox(height: 10),
+          ...sectorDistribution.entries.map((entry) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    entry.key,
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  Text(
-                    '\$${entry.value.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
+                  Text(entry.key, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                  Text('\$${entry.value.toStringAsFixed(2)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                 ],
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }).toList(),
         ],
       ),
     );
@@ -185,92 +349,67 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
 class PortfolioItem {
   final String name;
-  final String ticker;
-  final int quantity;
-  double currentPrice;
+  final String symbol;
+  final double quantity;
+  final double currentPrice;
   final double purchasePrice;
   final String sector;
 
-  PortfolioItem(
-    this.name,
-    this.ticker,
-    this.quantity,
-    this.currentPrice,
-    this.purchasePrice,
-    this.sector,
-  );
+  PortfolioItem(this.name, this.symbol, this.quantity, this.currentPrice, this.purchasePrice, this.sector);
 
   double get totalValue => quantity * currentPrice;
-  double get returns => (currentPrice - purchasePrice) * quantity;
-  double get percentageReturn => ((currentPrice - purchasePrice) / purchasePrice) * 100;
 }
 
 class PortfolioCard extends StatelessWidget {
-  final PortfolioItem portfolioItem;
+  final PortfolioItem item;
 
-  PortfolioCard(this.portfolioItem);
+  PortfolioCard(this.item);
 
   @override
   Widget build(BuildContext context) {
-    bool isPositive = portfolioItem.currentPrice > portfolioItem.purchasePrice;
+    double profitLoss = (item.currentPrice - item.purchasePrice) * item.quantity;
+    bool isProfit = profitLoss >= 0;
 
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 4,
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  portfolioItem.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                Icon(
-                  isPositive ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                  color: isPositive ? Colors.green : Colors.red,
-                  size: 30,
-                ),
+                Text(item.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(item.symbol, style: TextStyle(fontSize: 16, color: Colors.grey)),
               ],
             ),
-            SizedBox(height: 10),
-            Text(
-              '${portfolioItem.quantity} units @ \$${portfolioItem.currentPrice.toStringAsFixed(2)}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Purchased @ \$${portfolioItem.purchasePrice.toStringAsFixed(2)}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            SizedBox(height: 10),
+            SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text('Quantity: ${item.quantity.toStringAsFixed(2)}'),
+                Text('Current Price: \$${item.currentPrice.toStringAsFixed(2)}'),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Total Value: \$${item.totalValue.toStringAsFixed(2)}', 
+                     style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(
-                  'Value: \$${portfolioItem.totalValue.toStringAsFixed(2)}',
+                  '${isProfit ? '+' : ''}\$${profitLoss.abs().toStringAsFixed(2)}',
                   style: TextStyle(
+                    color: isProfit ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.blueAccent,
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Returns: \$${portfolioItem.returns.toStringAsFixed(2)} (${portfolioItem.percentageReturn.toStringAsFixed(2)}%)',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isPositive ? Colors.green : Colors.red,
-              ),
             ),
           ],
         ),

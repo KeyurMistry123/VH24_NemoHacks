@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
           localContext, // Use the captured context
           MaterialPageRoute(
               builder: (context) =>
-                  QuestionsPage()), // Navigate to VideosScreen
+                  PortfolioScreen()), // Navigate to VideosScreen
         );
       } on FirebaseAuthException catch (e) {
         print(e.message);

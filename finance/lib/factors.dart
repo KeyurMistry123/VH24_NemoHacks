@@ -1,5 +1,7 @@
+import 'package:finance/updated_stocks.dart';
 import 'package:flutter/material.dart';
 import 'analysisrisk.dart';
+
 // Note: You need to create a PredictionForm widget in a separate file
 // and import it here. For now, I'll comment out the import to avoid errors.
 // import 'prediction_form.dart';
@@ -25,8 +27,11 @@ class _FactorsFormState extends State<FactorsForm> {
 
   late int totalScore = widget.totalScore;
 
-  void calculateTotalScore() {
+
+
+void calculateTotalScore() {
     setState(() {
+      // Calculate the total score
       totalScore = ageScore +
           dependentsScore +
           incomeScore +
@@ -34,19 +39,45 @@ class _FactorsFormState extends State<FactorsForm> {
           financialGoalsScore +
           ailmentsScore +
           lifestyleScore +
-          emergencyScore;
+          emergencyScore +
+          widget.totalScore;
 
+      // Determine the risk profile based on the total score
       riskProfile = _determineRiskProfile();
+    });
+
+    // Show the SnackBar with the total score and risk profile
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Total Score: $totalScore\nRisk Profile: $riskProfile',
+          style: const TextStyle(fontSize: 16),
+        ),
+        backgroundColor: Colors.deepPurple.shade400,
+        duration:
+            const Duration(seconds: 2), // SnackBar will be shown for 2 seconds
+      ),
+    );
+
+    // Delay navigation to the next screen by 3 seconds after the SnackBar is shown
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StreamlitWebView2(
+              riskprofile: riskProfile), // Replace with your actual next screen
+        ),
+      );
     });
   }
 
   String _determineRiskProfile() {
     if (totalScore >= 18 && totalScore < 30) {
-      return "You are a conservative investor.";
+      return "Conservative (Low-risk Investor)";
     } else if (totalScore >= 30 && totalScore < 42) {
-      return "You are a moderate investor.";
+      return "Moderate (Medium-risk Investor)";
     } else if (totalScore >= 42 && totalScore <= 54) {
-      return "You are an aggressive investor.";
+      return "Aggressive (High-risk Investor)";
     } else {
       return "Risk profile not determined.";
     }

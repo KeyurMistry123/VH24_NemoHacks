@@ -76,6 +76,8 @@ class MyApp extends StatelessWidget {
               '/questionnaire': (context) => QuestionsPage(),
               '/risk_analysis': (context) => PredictionForm(), // Assuming you have a RiskAnalysisPage widget
               '/chatbot': (context) => FinancialAdviceScreen(), 
+              '/portfolio': (context) => PortfolioScreen(),
+               
               // Assuming you have a ChatbotPage widget
             },
             theme: ThemeData.dark(), // Ensure this is set correctly

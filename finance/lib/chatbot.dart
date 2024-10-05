@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class FinancialAdviceScreen extends StatefulWidget {
   @override
@@ -8,10 +9,6 @@ class FinancialAdviceScreen extends StatefulWidget {
 }
 
 class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Map<String, dynamic>? _userData;
-  bool _loading = true;
-
   // Chatbot variables
   final List<Map<String, String>> _messages = [];
   final TextEditingController _controller = TextEditingController();
@@ -19,112 +16,83 @@ class _FinancialAdviceScreenState extends State<FinancialAdviceScreen> {
   double _totalExpenses = 0;
 
   final List<Map<String, dynamic>> _questions = [
-    {"question": "What is your current monthly rent or mortgage payment?", "key": "Rent"},
-    {"question": "How much is your monthly loan payment?", "key": "LoanPayment"},
+    {
+      "question": "What is your current monthly rent or mortgage payment?",
+      "key": "Rent"
+    },
+    {
+      "question": "How much is your monthly loan payment?",
+      "key": "LoanPayment"
+    },
     {"question": "What is your loan interest rate?", "key": "InterestRate"},
-    {"question": "How do you commute? What are your monthly transportation costs?", "key": "Transportation"},
-    {"question": "How much do you typically spend on electricity, water, gas, and internet each month?", "key": "Utilities"},
-    {"question": "How much do you spend on groceries and dining out?", "key": "Food"},
-    {"question": "What are your monthly expenses for entertainment, such as movies, concerts, and hobbies?", "key": "Entertainment"},
-    {"question": "How much do you spend on personal care items like toiletries and clothing?", "key": "Personal Care"},
-    {"question": "Are you paying off any other debts besides the loan mentioned?", "key": "Debt Payments"},
-    {"question": "How much do you spend on health insurance and medical expenses each month?", "key": "HealthExpenses"},
-    {"question": "What are your monthly savings or investment contributions?", "key": "Savings"},
-    {"question": "Do you have any subscriptions or memberships (e.g., Netflix, gym)? What do they cost?", "key": "Subscriptions"},
-    {"question": "How much do you spend on clothing and personal items each month?", "key": "Clothing"},
-    {"question": "What are your monthly expenses for household items (cleaning supplies, etc.)?", "key": "HouseholdItems"},
+    {
+      "question":
+          "How do you commute? What are your monthly transportation costs?",
+      "key": "Transportation"
+    },
+    {
+      "question":
+          "How much do you typically spend on electricity, water, gas, and internet each month?",
+      "key": "Utilities"
+    },
+    {
+      "question": "How much do you spend on groceries and dining out?",
+      "key": "Food"
+    },
+    {
+      "question":
+          "What are your monthly expenses for entertainment, such as movies, concerts, and hobbies?",
+      "key": "Entertainment"
+    },
+    {
+      "question":
+          "How much do you spend on personal care items like toiletries and clothing?",
+      "key": "Personal Care"
+    },
+    {
+      "question":
+"How many other debts, besides the mentioned loan, are you currently paying off?",
+      "key": "Debt Payments"
+    },
+    {
+      "question":
+          "How much do you spend on health insurance and medical expenses each month?",
+      "key": "HealthExpenses"
+    },
+    {
+      "question": "What are your monthly savings or investment contributions?",
+      "key": "Savings"
+    },
+    
+    {
+      "question":
+          "How much do you spend on clothing and personal items each month?",
+      "key": "Clothing"
+    },
+    {
+      "question":
+          "What are your monthly expenses for household items (cleaning supplies, etc.)?",
+      "key": "HouseholdItems"
+    },
   ];
 
   Map<String, double> _userExpenses = {};
-  Map<String, double> _prediction = {};
-  Map<String, double> _riskAnalysis = {};
 
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
-    _addBotMessage("👋 Welcome! Let's calculate your monthly expenses and suggest ways to pay off your loan efficiently.");
+    _addBotMessage(
+        "👋 Welcome! Let's calculate your monthly expenses and suggest ways to pay off your loan efficiently.");
     _addBotMessage(_questions[_questionIndex]["question"]!);
   }
 
-Future<void> _fetchUserData() async {
-  setState(() {
-    _loading = true;
-  });
-
-  try {
-    User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      print("Current user ID: ${currentUser.uid}");
-      
-      // Fetch user document
-      DocumentSnapshot userSnapshot = await _firestore.collection('users').doc(currentUser.uid).get();
-      if (userSnapshot.exists) {
-        print("User document exists");
-        setState(() {
-          _userData = userSnapshot.data() as Map<String, dynamic>?;
-          print("User data: $_userData");
-        });
-
-        // Fetch prediction subcollection
-        QuerySnapshot predictionSnapshot = await _firestore
-            .collection('users')
-            .doc(currentUser.uid)
-            .collection('predictions')
-            .limit(1)  // Assuming you want the first prediction document
-            .get();
-
-        if (predictionSnapshot.docs.isNotEmpty) {
-          print("Prediction document exists");
-          Map<String, dynamic> predictionData = predictionSnapshot.docs.first.data() as Map<String, dynamic>;
-          print("Prediction data: $predictionData");
-
-          // Access the 'prediction' field within the document
-          if (predictionData.containsKey('prediction')) {
-            setState(() {
-              _prediction = (predictionData['prediction'] as Map<String, dynamic>)
-                  .map((key, value) => MapEntry(key, value.toDouble()));
-              print("Risk analysis data: $_prediction");
-            });
-          } else {
-            print("Prediction field not found in document");
-          }
-        } else {
-          print("No prediction documents found for this user");
-        }
-      } else {
-        print("User document does not exist for ID: ${currentUser.uid}");
-      }
-    } else {
-      print("No user is currently signed in.");
-    }
-  } catch (e) {
-    print("Error fetching data: $e");
-  } finally {
-    setState(() {
-      _loading = false;
-    });
-  }
-}
-
-  void _handleUserInput(String input) async {
+  void _handleUserInput(String input) {
     if (_questionIndex < _questions.length) {
       final expenseKey = _questions[_questionIndex]['key'];
       double? parsedValue = double.tryParse(input);
 
       if (parsedValue != null) {
         _userExpenses[expenseKey] = parsedValue;
-
-        try {
-          User? currentUser = FirebaseAuth.instance.currentUser;
-          if (currentUser != null) {
-            await _firestore.collection('users').doc(currentUser.uid).set({
-              'expenses': {expenseKey: parsedValue},
-            }, SetOptions(merge: true));
-          }
-        } catch (e) {
-          print("Error saving response to Firestore: $e");
-        }
 
         setState(() {
           _messages.add({
@@ -164,34 +132,120 @@ Future<void> _fetchUserData() async {
     String suggestions = _createSuggestions();
     _addBotMessage(
         "Based on your total monthly expenses of Rs. $_totalExpenses, here's some personalized advice on paying off your loan efficiently:\n\n$suggestions");
+    _generatePDFReport();
   }
 
-  String _createSuggestions() {
-    List<String> suggestions = [];
+String _createSuggestions() {
+  List<String> suggestions = [];
 
-    double userRent = _userExpenses['Rent'] ?? 0;
-    if (userRent > 10000) {
-      suggestions.add("💡 You're spending a lot on rent. Consider downsizing to free up more funds for loan payments.");
+  // Rent Analysis
+  double userRent = _userExpenses['Rent'] ?? 0;
+  if (userRent > 10000) {
+    suggestions.add(
+        "You're spending a lot on rent. Consider downsizing or relocating to a more affordable area to free up funds for loan payments or savings.");
+  } else if (userRent > 0) {
+    suggestions.add("Your rent is within an acceptable range. Consider negotiating your lease for potential savings.");
+  } else {
+    suggestions.add("It looks like you don't have any rent payments. If you're a homeowner, ensure you're factoring in property-related costs.");
+  }
+
+  // Loan Payment Analysis
+  double userLoanPayment = _userExpenses['LoanPayment'] ?? 0;
+  double loanInterestRate = _userExpenses['InterestRate'] ?? 0;
+
+  if (userLoanPayment > 0 && loanInterestRate > 0) {
+    suggestions.add(
+        "You're making progress on your loan. Keep paying consistently to reduce the principal and interest over time. Consider refinancing if interest rates drop.");
+  } else {
+    suggestions.add("Please ensure you've provided all loan-related information for a more accurate analysis.");
+  }
+
+  // Emergency Savings Analysis
+  double userSavings = _userExpenses['Savings'] ?? 0;
+  if (userSavings < 5000) {
+    suggestions.add(
+        "Your emergency savings appear low. Aim to build an emergency fund covering at least 3-6 months of living expenses.");
+  } else {
+    suggestions.add("Your savings look healthy. Keep building your emergency fund for added financial security.");
+  }
+
+  // Investment Contributions Analysis
+  double userInvestments = _userExpenses['Investments'] ?? 0;
+  if (userInvestments < 1000) {
+    suggestions.add(
+        "You're contributing a small amount to investments. Consider increasing your contributions to grow your wealth over time.");
+  } else {
+    suggestions.add(" Your investment contributions are on track. Ensure you're diversified to minimize risk.");
+  }
+
+  // Discretionary Spending Analysis
+  double userDiscretionary = _userExpenses['DiscretionarySpending'] ?? 0;
+  if (userDiscretionary > 5000) {
+    suggestions.add(
+        "Your discretionary spending seems high. Review your non-essential expenses and find areas to cut back.");
+  } else {
+    suggestions.add(
+        "our discretionary spending is within a reasonable limit. Keep an eye on luxury purchases to avoid overspending.");
+  }
+
+  // Debt-to-Income Ratio Analysis
+  double userIncome = _userExpenses['Income'] ?? 0;
+  if (userIncome > 0) {
+    double debtToIncomeRatio = (userLoanPayment / userIncome) * 100;
+    if (debtToIncomeRatio > 40) {
+      suggestions.add(
+          "Your debt-to-income ratio is above 40%, which may be a risk for future loans. Consider reducing debt or increasing income.");
     } else {
-      suggestions.add("👍 Your rent is within an acceptable range.");
+      suggestions.add(
+          "✔️ Your debt-to-income ratio is in a healthy range, allowing you more financial flexibility.");
     }
+  } else {
+    suggestions.add("Please provide your income for a more accurate debt-to-income analysis.");
+  }
 
-    double userLoanPayment = _userExpenses['LoanPayment'] ?? 0;
-    double loanInterestRate = _userExpenses['InterestRate'] ?? 0;
-    double loanPrincipal = _userData?['LoanAmount'] ?? 0;
+  return suggestions.join('\n');
+}
 
-    if (userLoanPayment > 0 && loanInterestRate > 0 && loanPrincipal > 0) {
-      double monthlyInterest = (loanPrincipal * (loanInterestRate / 100)) / 12;
-      if (userLoanPayment > monthlyInterest) {
-        suggestions.add("✅ You're making good progress on your loan. Keep paying more than the monthly interest to reduce the principal.");
-      } else {
-        suggestions.add("⚠️ Your loan payment is mostly covering interest. Try to pay more to reduce the principal and pay off your loan faster.");
-      }
-    } else {
-      suggestions.add("Please ensure you've provided all loan-related information.");
-    }
 
-    return suggestions.join('\n');
+  Future<void> _generatePDFReport() async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Header(
+                level: 0,
+                child: pw.Text('Financial Report'),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text('Monthly Expenses Breakdown:',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              ..._userExpenses.entries.map((entry) {
+                return pw.Text(
+                    '${entry.key}: Rs. ${entry.value.toStringAsFixed(2)}');
+              }).toList(),
+              pw.SizedBox(height: 20),
+              pw.Text(
+                  'Total Monthly Expenses: Rs. ${_totalExpenses.toStringAsFixed(2)}',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Text('Personalized Suggestions:',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Text(_createSuggestions()),
+            ],
+          );
+        },
+      ),
+    );
+
+    // Save or share the PDF
+    await Printing.sharePdf(
+        bytes: await pdf.save(), filename: 'financial_report.pdf');
   }
 
   @override
@@ -200,108 +254,74 @@ Future<void> _fetchUserData() async {
       appBar: AppBar(
         title: Text("Financial Advisor"),
         backgroundColor: Color.fromARGB(255, 81, 58, 183),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.picture_as_pdf),
+            onPressed: _generatePDFReport,
+          ),
+        ],
       ),
-      body: _loading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Align(
+                    alignment: _messages[index]["role"] == "user"
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: _messages[index]["role"] == "user"
+                            ? Colors.blue
+                            : Colors.grey[700],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _messages[index]["message"]!,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               children: [
                 Expanded(
-                  child: Row(
-                    children: [
-                      // Left side: Risk Analysis Score
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[800],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: _prediction.isNotEmpty
-                                ? Center(
-                                    child: Text(
-                                      "Risk Score: ${_prediction.values.reduce((a, b) => a + b).toStringAsFixed(2)}",
-                                      style: TextStyle(color: Colors.white, fontSize: 18),
-                                    ),
-                                  )
-                                : Center(child: Text("No risk analysis data available", style: TextStyle(color: Colors.white))),
-                          ),
-                        ),
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: "Type your answer...",
+                      filled: true,
+                      fillColor: Colors.grey[900],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none,
                       ),
-                      
-                      // Right side: User Features from Firebase
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[800],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: _userData != null
-                                ? Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      "User Details:\nLoan Amount: Rs. ${_userData!['LoanAmount']}\nInterest Rate: ${_userData!['InterestRate']}%",
-                                      style: TextStyle(color: Colors.white, fontSize: 18),
-                                    ),
-                                  )
-                                : Center(child: Text("No user data available", style: TextStyle(color: Colors.white))),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
+                    onSubmitted: _handleUserInput,
                   ),
                 ),
-                
-                Expanded(
-                  flex: 3,
-                  child: ListView.builder(
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      return ListTile(
-                        leading: message["role"] == "bot"
-                            ? CircleAvatar(
-                                backgroundColor: Colors.blueAccent,
-                                child: Text("Bot"),
-                              )
-                            : CircleAvatar(
-                                backgroundColor: Colors.greenAccent,
-                                child: Text("You"),
-                              ),
-                        title: Text(message["message"]!),
-                      );
-                    },
-                  ),
-                ),
-                
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          decoration: InputDecoration(
-                            labelText: "Your answer",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          _handleUserInput(_controller.text);
-                        },
-                      ),
-                    ],
-                  ),
+                IconButton(
+                  icon: Icon(Icons.send, color: Colors.white),
+                  onPressed: () {
+                    if (_controller.text.isNotEmpty) {
+                      _handleUserInput(_controller.text);
+                    }
+                  },
                 ),
               ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }
