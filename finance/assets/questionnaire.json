@@ -1,0 +1,212 @@
+[
+  {
+    "id": "q11",
+    "question": "You’ve been following a particular stock for months, and it's performing exceptionally well. You’ve made a significant return, and now you have the option to continue investing more money in it. What would you do?",
+    "options": [
+      {
+        "text": "I’d invest more, confident that my knowledge will help me continue to beat the market.",
+        "score": 3,
+        "next": "q12"
+      },
+      {
+        "text": "I’d invest cautiously, making small additional investments.",
+        "score": 2,
+        "next": "q12"
+      },
+      {
+        "text": "I’d diversify my investments to reduce potential risk.",
+        "score": 1,
+        "next": "q12"
+      }
+    ]
+  },
+  {
+    "id": "q12",
+    "question": "You invested in a mutual fund that has recently dropped by 15% in value. The market shows signs of instability, but there is potential for recovery. How do you respond to this situation?",
+    "options": [
+      {
+        "text": "I’d sell the mutual fund immediately to avoid further losses.",
+        "score": 1,
+        "next": "q13"
+      },
+      {
+        "text": "I’d wait and watch, hoping the market will recover soon.",
+        "score": 2,
+        "next": "q13"
+      },
+      {
+        "text": "I’d consider buying more of the fund since its price is lower, expecting future gains.",
+        "score": 3,
+        "next": "q13"
+      }
+    ]
+  },
+  {
+    "id": "q13",
+    "question": "A group of friends and online communities are talking about a hot new cryptocurrency that’s skyrocketing in value. You see that many others are joining in, and there’s a lot of buzz around it. What would you do in this situation?",
+    "options": [
+      {
+        "text": "I’d buy into the cryptocurrency immediately because everyone seems to be profiting.",
+        "score": 1,
+        "next": "q14"
+      },
+      {
+        "text": "I’d watch for a while and might invest a small amount after doing my own research.",
+        "score": 2,
+        "next": "q14"
+      },
+      {
+        "text": "I’d avoid investing, as I believe following trends can be risky without thorough research.",
+        "score": 3,
+        "next": "q14"
+      }
+    ]
+  },
+  {
+    "id": "q14",
+    "question": "You bought a stock at $100, and now it’s trading at $75. Analysts predict it could drop further, but it’s hard for you to ignore the $100 price you paid. How would you react?",
+    "options": [
+      {
+        "text": "I’d hold the stock, waiting until it goes back to $100 before considering selling.",
+        "score": 1,
+        "next": "q15"
+      },
+      {
+        "text": "I’d monitor it, but I might sell if it keeps dropping further.",
+        "score": 2,
+        "next": "q15"
+      },
+      {
+        "text": "I’d sell it and move on, regardless of the initial price, to minimize future losses.",
+        "score": 3,
+        "next": "q15"
+      }
+    ]
+  },
+  {
+    "id": "q15",
+    "question": "The stock market has been on a winning streak for the past three months, and all indicators point to continued growth. However, the previous year was highly volatile. What action would you take now?",
+    "options": [
+      {
+        "text": "I’d invest heavily, assuming the market will continue to rise as it has recently.",
+        "score": 1,
+        "next": "q16"
+      },
+      {
+        "text": "I’d invest moderately, while being cautious of possible market corrections.",
+        "score": 2,
+        "next": "q16"
+      },
+      {
+        "text": "I’d remain cautious, assuming the market could turn volatile again, and diversify my portfolio.",
+        "score": 3,
+        "next": "q16"
+      }
+    ]
+  },
+  {
+    "id": "q16",
+    "question": "You’ve found an investment opportunity that aligns with your views on the market. However, other experts offer conflicting advice that suggests the opportunity is riskier than it seems. What would you do next?",
+    "options": [
+      {
+        "text": "I’d ignore the conflicting advice and follow my original decision.",
+        "score": 1,
+        "next": "q17"
+      },
+      {
+        "text": "I’d consider the conflicting opinions but likely stick with my initial plan.",
+        "score": 2,
+        "next": "q17"
+      },
+      {
+        "text": "I’d research the conflicting advice further, adjusting my strategy if necessary.",
+        "score": 3,
+        "next": "q17"
+      }
+    ]
+  },
+  {
+    "id": "q17",
+    "question": "You have a savings account that you’ve earmarked for emergencies, and an investment account for growing your wealth. A great investment opportunity arises, but you don’t have enough funds in your investment account. How do you handle this situation?",
+    "options": [
+      {
+        "text": "I wouldn’t touch my savings account; it's strictly for emergencies.",
+        "score": 1,
+        "next": "q18"
+      },
+      {
+        "text": "I might borrow a small portion from my savings account but keep most of it intact.",
+        "score": 2,
+        "next": "q18"
+      },
+      {
+        "text": "I’d use my savings to make the investment, knowing I can replenish it later.",
+        "score": 3,
+        "next": "q18"
+      }
+    ]
+  },
+  {
+    "id": "q18",
+    "question": "You’ve held a portfolio for years with a steady return. Recently, newer investment options with higher growth potential have emerged, but switching would require research and adjustments to your current portfolio. What would you do?",
+    "options": [
+      {
+        "text": "I’d stick with my current portfolio as it has worked well for me.",
+        "score": 1,
+        "next": "q19"
+      },
+      {
+        "text": "I’d explore the new options, but I’d make changes cautiously.",
+        "score": 2,
+        "next": "q19"
+      },
+      {
+        "text": "I’d actively review and change my portfolio to take advantage of higher returns.",
+        "score": 3,
+        "next": "q19"
+      }
+    ]
+  },
+  {
+    "id": "q19",
+    "question": "One of your investments has significantly increased in value over time, but market conditions suggest it may have reached its peak. Selling it now would lock in your gains, but you’re emotionally attached to it. How do you proceed?",
+    "options": [
+      {
+        "text": "I’d keep the investment because I’ve owned it for so long, even if it might stop growing.",
+        "score": 1,
+        "next": "q20"
+      },
+      {
+        "text": "I’d hold onto it for a bit longer to see if it can grow more before considering selling.",
+        "score": 2,
+        "next": "q20"
+      },
+      {
+        "text": "I’d sell it and move on, despite my emotional attachment, to maximize profits.",
+        "score": 3,
+        "next": "q20"
+      }
+    ]
+  },
+  {
+    "id": "q20",
+    "question": "You’ve recently read several articles about a tech company with huge potential for growth. The news is everywhere, and the company’s stock price has already started to rise. How would you react?",
+    "options": [
+      {
+        "text": "I’d invest in the company right away, as it’s clearly a big opportunity.",
+        "score": 1,
+        "next": null
+      },
+      {
+        "text": "I’d do more research to confirm the company's growth potential before investing.",
+        "score": 2,
+        "next": null
+      },
+      {
+        "text": "I’d avoid investing based solely on media coverage and look for more balanced information.",
+        "score": 3,
+        "next": null
+      }
+    ]
+  }
+]

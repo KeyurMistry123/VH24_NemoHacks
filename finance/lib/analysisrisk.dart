@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For JSON encoding
+import 'package:firebase_auth/firebase_auth.dart'; // For Firebase Authentication
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Firestore
 
 class PredictionForm extends StatefulWidget {
   @override
@@ -54,10 +56,20 @@ class _PredictionFormState extends State<PredictionForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Loan Prediction', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text('Loan Prediction', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color.fromARGB(255, 22, 3, 117),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.arrow_forward),
+            onPressed: () {
+              Navigator.pushNamed(context, '/chatbot');
+            },
+          ),
+        ],
       ),
-      backgroundColor: Colors.black, // Set background to black
+      
+      backgroundColor: Colors.white, // Set background to black
+      
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -108,10 +120,10 @@ class _PredictionFormState extends State<PredictionForm> {
       child: TextFormField(
         controller: controller,
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-        style: TextStyle(color: Colors.white), // Text color white
+        style: TextStyle(color: Colors.black), // Text color white
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white),
+          labelStyle: TextStyle(color: Colors.black),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: Color.fromARGB(255, 22, 3, 117), // Border color
@@ -137,8 +149,17 @@ class _PredictionFormState extends State<PredictionForm> {
     );
   }
 
-  // Function to send form data to the Flask server
+  // Function to send form data to the Flask server and store in Firebase
   void sendPredictionRequest(BuildContext context) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      showErrorDialog(context, 'User not logged in');
+      return;
+    }
+    
+  final userId = user.uid; // Capture the user ID
+
     final data = {
       'Age': int.parse(ageController.text),
       'AnnualIncome': double.parse(annualIncomeController.text),
@@ -160,20 +181,31 @@ class _PredictionFormState extends State<PredictionForm> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://024e-2401-4900-5605-1af0-4cdd-d958-d4b8-4b0d.ngrok-free.app/predict'), // Updated URL with /predict endpoint
+        Uri.parse('https://024e-2401-4900-5605-1af0-4cdd-d958-d4b8-4b0d.ngrok-free.app/predict'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
         final result = jsonDecode(response.body);
+
         if (result.containsKey('prediction')) {
+          final prediction = result['prediction'][0];
+
+          // Store input and prediction in Firestore
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('predictions').add({
+            'input': data,
+            'prediction': prediction,
+                      'userId': userId, // Include user ID in the document
+
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
               title: Text('Prediction Result'),
-              content: Text('The predicted result is: ${result['prediction'][0]}'),
+              content: Text('The predicted result is: $prediction'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -208,10 +240,4 @@ class _PredictionFormState extends State<PredictionForm> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: PredictionForm(),
-  ));
 }

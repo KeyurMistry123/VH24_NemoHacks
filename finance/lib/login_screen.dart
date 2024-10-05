@@ -1,4 +1,9 @@
+import 'package:finance/analysisrisk.dart';
+import 'package:finance/chatbot.dart';
+import 'package:finance/portfolio.dart';
+import 'package:finance/questionnaire.dart';
 import 'package:finance/registration_screen.dart';
+import 'package:finance/userfeature.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
           localContext, // Use the captured context
           MaterialPageRoute(
               builder: (context) =>
-                  SignUpPage()), // Navigate to VideosScreen
+                  QuestionsPage()), // Navigate to VideosScreen
         );
       } on FirebaseAuthException catch (e) {
         print(e.message);
@@ -47,9 +52,9 @@ class _LoginPageState extends State<LoginPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               colors: [
-                Color.fromARGB(0, 44, 33, 9),
-                Color.fromARGB(0, 34, 9, 44),
-                Color.fromARGB(0, 34, 9, 44),
+                Colors.white,
+                Colors.white,
+                Colors.white,
               ],
             ),
           ),
@@ -68,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                         duration: Duration(milliseconds: 1000),
                         child: Text("Login",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 40))),
+                                TextStyle(color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold))),
                     SizedBox(
                       height: 10,
                     ),
@@ -76,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                         duration: Duration(milliseconds: 1300),
                         child: Text("Welcome Back",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 18))),
+                                TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold))),
                   ],
                 ),
               ),
@@ -84,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 184, 8, 8),
+                    color: Color.fromARGB(255, 22, 3, 117),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(60),
                         topRight: Radius.circular(60)),
@@ -134,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                                               TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black)
                                       ),
                                     ),
                                     Container(
@@ -156,6 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                                               TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black)
                                       ),
                                     ),
                                   ],
@@ -169,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                           FadeInUp(
                               duration: Duration(milliseconds: 1500),
                               child: Text("Forgot Password?",
-                                  style: TextStyle(color: Colors.black))),
+                                  style: TextStyle(color: Colors.white))),
                           SizedBox(
                             height: 40,
                           ),
@@ -178,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: MaterialButton(
                               onPressed: _login,
                               height: 50,
-                              color: Colors.green.shade900,
+                              color: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
@@ -200,7 +207,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.pushNamed(context, '/signup');
                               },
                               child: Text("Don't have an account? Sign up",
-                                  style: TextStyle(color: Colors.black)),
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ),
                         ],

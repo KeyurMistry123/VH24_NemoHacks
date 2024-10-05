@@ -19,7 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
       _formKey.currentState?.save();
       try {
         await _auth.createUserWithEmailAndPassword(email: _email!, password: _password!);
-        Navigator.pushNamed(context, '/login');
+        Navigator.pushReplacementNamed(context, '/login');;
       } on FirebaseAuthException catch (e) {
         print(e.message);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Unknown error occurred')));
@@ -38,9 +38,9 @@ class _SignUpPageState extends State<SignUpPage> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               colors: [
-                Color.fromARGB(0, 44, 33, 9),
-                Color.fromARGB(0, 44, 33, 9),
-                Color.fromARGB(0, 44, 33, 9),
+                Colors.white,
+                Colors.white,
+                Colors.white,
               ],
             ),
           ),
@@ -53,9 +53,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    FadeInUp(duration: Duration(milliseconds: 1000), child: Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 40))),
+                    FadeInUp(duration: Duration(milliseconds: 1000), child: Text("Sign Up", style: TextStyle(color: Colors.black, fontSize: 40, fontWeight: FontWeight.bold))),
                     SizedBox(height: 10,),
-                    FadeInUp(duration: Duration(milliseconds: 1300), child: Text("Join us now", style: TextStyle(color: Colors.white, fontSize: 18))),
+                    FadeInUp(duration: Duration(milliseconds: 1300), child: Text("Join us now", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold))),
                   ],
                 ),
               ),
@@ -63,7 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 22, 3, 117),
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(60), topRight: Radius.circular(60)),
                   ),
                   child: SingleChildScrollView(
@@ -101,6 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           hintStyle: TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black), // Input text color set to black
                                       ),
                                     ),
                                     Container(
@@ -116,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           hintStyle: TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black), // Input text color set to black
                                       ),
                                     ),
                                     Container(
@@ -131,6 +133,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           hintStyle: TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black), // Input text color set to black
                                       ),
                                     ),
                                     Container(
@@ -140,13 +143,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       child: TextFormField(
                                         obscureText: true,
-                                        
                                         onSaved: (input) => _password = input,
                                         decoration: InputDecoration(
                                           hintText: "Password",
                                           hintStyle: TextStyle(color: Colors.black),
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(color: Colors.black), // Input text color set to black
                                       ),
                                     ),
                                   ],
@@ -160,7 +163,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             child: MaterialButton(
                               onPressed: _signUp,
                               height: 50,
-                              color: Colors.green.shade900,
+                              color: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
@@ -176,7 +179,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               onPressed: () {
                                 Navigator.pushNamed(context, '/login');
                               },
-                              child: Text("Already have an account? Login", style: TextStyle(color: Colors.black)),
+                              child: Text("Already have an account? Login", style: TextStyle(color: Colors.white)),
                             ),
                           ),
                         ],
