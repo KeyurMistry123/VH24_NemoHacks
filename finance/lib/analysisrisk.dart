@@ -16,19 +16,26 @@ class _PredictionFormState extends State<PredictionForm> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController annualIncomeController = TextEditingController();
   final TextEditingController creditScoreController = TextEditingController();
-  final TextEditingController employmentStatusController = TextEditingController();
+  final TextEditingController employmentStatusController =
+      TextEditingController();
   final TextEditingController loanAmountController = TextEditingController();
   final TextEditingController loanDurationController = TextEditingController();
   final TextEditingController maritalStatusController = TextEditingController();
-  final TextEditingController numberOfDependentsController = TextEditingController();
-  final TextEditingController homeOwnershipStatusController = TextEditingController();
-  final TextEditingController bankruptcyHistoryController = TextEditingController();
-  final TextEditingController paymentHistoryController = TextEditingController();
+  final TextEditingController numberOfDependentsController =
+      TextEditingController();
+  final TextEditingController homeOwnershipStatusController =
+      TextEditingController();
+  final TextEditingController bankruptcyHistoryController =
+      TextEditingController();
+  final TextEditingController paymentHistoryController =
+      TextEditingController();
   final TextEditingController totalAssetsController = TextEditingController();
-  final TextEditingController totalLiabilitiesController = TextEditingController();
+  final TextEditingController totalLiabilitiesController =
+      TextEditingController();
   final TextEditingController monthlyIncomeController = TextEditingController();
   final TextEditingController netWorthController = TextEditingController();
-  final TextEditingController monthlyLoanPaymentController = TextEditingController();
+  final TextEditingController monthlyLoanPaymentController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -56,20 +63,17 @@ class _PredictionFormState extends State<PredictionForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      title: Text('Loan Prediction', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text('Loan Prediction',
+            style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Color.fromARGB(255, 22, 3, 117),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.arrow_forward),
-            onPressed: () {
-              Navigator.pushNamed(context, '/chatbot');
-            },
-          ),
-        ],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, '/portfolio');
+          },
+        ),
       ),
-      
-      backgroundColor: Colors.white, // Set background to black
-      
+      backgroundColor: Colors.white, // Set background to white
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -77,21 +81,33 @@ class _PredictionFormState extends State<PredictionForm> {
           child: ListView(
             children: [
               buildTextField('Age', ageController, isNumeric: true),
-              buildTextField('Annual Income', annualIncomeController, isNumeric: true),
-              buildTextField('Credit Score', creditScoreController, isNumeric: true),
-              buildTextField('Employment Status (0: Employed, 1: Unemployed, 2: Self-employed)', employmentStatusController),
-              buildTextField('Loan Amount', loanAmountController, isNumeric: true),
-              buildTextField('Loan Duration', loanDurationController, isNumeric: true),
-              buildTextField('Marital Status (0: Married, 1: Single) ', maritalStatusController),
-              buildTextField('Number of Dependents', numberOfDependentsController, isNumeric: true),
-              buildTextField('Home Ownership Status (0: Own, 1: Mortgage, 2: Rent)', homeOwnershipStatusController),
-              buildTextField('Bankruptcy History (0: No, 1: Yes)', bankruptcyHistoryController),
-              buildTextField('Payment History(0: Done, 1:Nope)', paymentHistoryController),
-              buildTextField('Total Assets', totalAssetsController, isNumeric: true),
-              buildTextField('Total Liabilities', totalLiabilitiesController, isNumeric: true),
-              buildTextField('Monthly Income', monthlyIncomeController, isNumeric: true),
+              buildTextField('Annual Income', annualIncomeController,
+                  isNumeric: true),
+              buildTextField('Credit Score', creditScoreController,
+                  isNumeric: true),
+              buildTextField('Employment Status', employmentStatusController),
+              buildTextField('Loan Amount', loanAmountController,
+                  isNumeric: true),
+              buildTextField('Loan Duration', loanDurationController,
+                  isNumeric: true),
+              buildTextField('Marital Status', maritalStatusController),
+              buildTextField(
+                  'Number of Dependents', numberOfDependentsController,
+                  isNumeric: true),
+              buildTextField(
+                  'Home Ownership Status', homeOwnershipStatusController),
+              buildTextField('Bankruptcy History', bankruptcyHistoryController),
+              buildTextField('Payment History', paymentHistoryController),
+              buildTextField('Total Assets', totalAssetsController,
+                  isNumeric: true),
+              buildTextField('Total Liabilities', totalLiabilitiesController,
+                  isNumeric: true),
+              buildTextField('Monthly Income', monthlyIncomeController,
+                  isNumeric: true),
               buildTextField('Net Worth', netWorthController, isNumeric: true),
-              buildTextField('Monthly Loan Payment', monthlyLoanPaymentController, isNumeric: true),
+              buildTextField(
+                  'Monthly Loan Payment', monthlyLoanPaymentController,
+                  isNumeric: true),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -102,7 +118,8 @@ class _PredictionFormState extends State<PredictionForm> {
                 },
                 child: Text('Predict'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 22, 3, 117), // Set button color
+                  backgroundColor:
+                      Color.fromARGB(255, 22, 3, 117), // Set button color
                   textStyle: TextStyle(color: Colors.white),
                 ),
               ),
@@ -114,13 +131,14 @@ class _PredictionFormState extends State<PredictionForm> {
   }
 
   // Widget to build text fields with TextEditingController
-  Widget buildTextField(String label, TextEditingController controller, {bool isNumeric = false}) {
+  Widget buildTextField(String label, TextEditingController controller,
+      {bool isNumeric = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         controller: controller,
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-        style: TextStyle(color: Colors.black), // Text color white
+        style: TextStyle(color: Colors.black), // Text color black
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.black),
@@ -131,7 +149,8 @@ class _PredictionFormState extends State<PredictionForm> {
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Color.fromARGB(255, 22, 3, 117), // Border color when focused
+              color:
+                  Color.fromARGB(255, 22, 3, 117), // Border color when focused
             ),
           ),
         ),
@@ -157,8 +176,8 @@ class _PredictionFormState extends State<PredictionForm> {
       showErrorDialog(context, 'User not logged in');
       return;
     }
-    
-  final userId = user.uid; // Capture the user ID
+
+    final userId = user.uid; // Capture the user ID
 
     final data = {
       'Age': int.parse(ageController.text),
@@ -181,7 +200,8 @@ class _PredictionFormState extends State<PredictionForm> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://024e-2401-4900-5605-1af0-4cdd-d958-d4b8-4b0d.ngrok-free.app/predict'),
+        Uri.parse(
+            'https://024e-2401-4900-5605-1af0-4cdd-d958-d4b8-4b0d.ngrok-free.app/predict'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
@@ -193,11 +213,14 @@ class _PredictionFormState extends State<PredictionForm> {
           final prediction = result['prediction'][0];
 
           // Store input and prediction in Firestore
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).collection('predictions').add({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .collection('predictions')
+              .add({
             'input': data,
             'prediction': prediction,
-                      'userId': userId, // Include user ID in the document
-
+            'userId': userId, // Include user ID in the document
             'timestamp': FieldValue.serverTimestamp(),
           });
 

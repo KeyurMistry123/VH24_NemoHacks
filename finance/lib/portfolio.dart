@@ -1,3 +1,5 @@
+import 'package:finance/userfeature.dart';
+
 import 'market_trend.dart';
 import 'package:finance/analysisrisk.dart';
 import 'package:finance/chatbot.dart';
@@ -239,6 +241,15 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => StreamlitWebView4()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('User Prediction profile'),
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => PredictionsScreen()),
                 );
               },
             ),

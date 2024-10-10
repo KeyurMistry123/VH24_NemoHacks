@@ -1,6 +1,7 @@
 import 'package:finance/updated_stocks.dart';
 import 'package:flutter/material.dart';
 import 'analysisrisk.dart';
+import 'updated_stocks.dart';
 
 // Note: You need to create a PredictionForm widget in a separate file
 // and import it here. For now, I'll comment out the import to avoid errors.
@@ -54,29 +55,34 @@ void calculateTotalScore() {
           style: const TextStyle(fontSize: 16),
         ),
         backgroundColor: Colors.deepPurple.shade400,
-        duration:
-            const Duration(seconds: 2), // SnackBar will be shown for 2 seconds
+        duration: const Duration(seconds: 2), // SnackBar will be shown for 2 seconds
       ),
     );
 
-    // Delay navigation to the next screen by 3 seconds after the SnackBar is shown
+    // Navigate based on the risk profile
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => StreamlitWebView2(
-              riskprofile: riskProfile), // Replace with your actual next screen
-        ),
-      );
+      if (riskProfile == "Conservative (Low-risk Investor)") {
+        Navigator.pushNamed(context, '/lowRisk');
+      } else if (riskProfile == "Moderate (Medium-risk Investor)") {
+        Navigator.pushNamed(context, '/mediumRisk');
+      } else if (riskProfile == "Aggressive (High-risk Investor)") {
+        Navigator.pushNamed(context, '/highRisk');
+      } else {
+        // If no valid profile, handle accordingly
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to determine risk profile.')),
+        );
+      }
     });
   }
 
+
   String _determineRiskProfile() {
-    if (totalScore >= 18 && totalScore < 30) {
+    if (totalScore >= 18 && totalScore < 24) {
       return "Conservative (Low-risk Investor)";
-    } else if (totalScore >= 30 && totalScore < 42) {
+    } else if (totalScore >= 24 && totalScore < 30) {
       return "Moderate (Medium-risk Investor)";
-    } else if (totalScore >= 42 && totalScore <= 54) {
+    } else if (totalScore >= 30 && totalScore <= 54) {
       return "Aggressive (High-risk Investor)";
     } else {
       return "Risk profile not determined.";

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(InvestmentSuggestionApp());
+  runApp(MediumRiskInvestmentApp());
 }
 
-class InvestmentSuggestionApp extends StatelessWidget {
+class MediumRiskInvestmentApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Investment Suggestions',
+      title: 'Medium-Risk Investment Suggestions',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
@@ -16,90 +16,98 @@ class InvestmentSuggestionApp extends StatelessWidget {
           bodyLarge: TextStyle(color: Colors.white),
         ),
       ),
-      home: InvestmentSuggestionPage(),
+      home: MediumRiskInvestmentSuggestionPage(),
     );
   }
 }
 
-class InvestmentSuggestionPage extends StatelessWidget {
+class MediumRiskInvestmentSuggestionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> investmentOptions = [
       // Stocks
       {
-        'Type': 'Blue-Chip Stocks',
-        'Example': 'Reliance Industries Ltd. (RIL), HDFC Bank Ltd., Infosys Ltd., Tata Consultancy Services (TCS)',
-        'Suggested %': '25%',
-        'Current Rate': '7.0% annually',
+        'Type': 'Growth Stocks',
+        'Example': 'HDFC Bank Ltd., Asian Paints Ltd., Bajaj Finance Ltd., Maruti Suzuki India Ltd.',
+        'Suggested %': '30%',
+        'Current Rate': '10.0% annually',
       },
       {
-        'Type': 'Dividend-Paying Stocks',
-        'Example': 'ITC Ltd., Hindustan Unilever Ltd. (HUL), Coca-Cola India',
-        'Suggested %': '15%',
-        'Current Rate': '5.5% annually',
+        'Type': 'Sectoral Stocks (Pharma & Tech)',
+        'Example': 'Dr. Reddy\'s Laboratories, Sun Pharma, Infosys, TCS',
+        'Suggested %': '20%',
+        'Current Rate': '9.5% annually',
       },
 
       // Mutual Funds
       {
-        'Type': 'Debt Mutual Funds',
-        'Example': 'HDFC Short Term Debt Fund, ICICI Prudential Bond Fund, Axis Treasury Advantage Fund',
-        'Suggested %': '20%',
-        'Current Rate': '6.3% annually',
+        'Type': 'Equity Mutual Funds',
+        'Example': 'SBI Small Cap Fund, HDFC Mid-Cap Opportunities Fund, ICICI Prudential Growth Fund',
+        'Suggested %': '25%',
+        'Current Rate': '11.5% annually',
       },
       {
-        'Type': 'Balanced Funds',
+        'Type': 'Hybrid Mutual Funds',
         'Example': 'HDFC Balanced Advantage Fund, ICICI Prudential Equity & Debt Fund',
-        'Suggested %': '10%',
-        'Current Rate': '8.1% annually',
-      },
-      {
-        'Type': 'Index Funds',
-        'Example': 'Nippon India Index Fund - Nifty 50 Plan, SBI Nifty Index Fund',
-        'Suggested %': '10%',
-        'Current Rate': '6.5% annually',
-      },
-
-      // Bonds
-      {
-        'Type': 'Government Securities (G-Secs)',
-        'Example': '10-Year G-Sec Bonds, State Development Loans (SDLs)',
-        'Suggested %': '20%',
-        'Current Rate': '6.8% annually',
-      },
-      {
-        'Type': 'Fixed Deposits (FDs)',
-        'Example': 'Bank Fixed Deposits (SBI, HDFC Bank), Post Office Time Deposits',
-        'Suggested %': '10%',
-        'Current Rate': '5.7% annually',
+        'Suggested %': '15%',
+        'Current Rate': '9.0% annually',
       },
 
       // ETFs
       {
-        'Type': 'Bond ETFs',
-        'Example': 'Nippon India ETF Long Term Gilt, ICICI Prudential Nifty Next 50 ETF',
+        'Type': 'Equity ETFs',
+        'Example': 'Nippon India ETF Nifty 50, ICICI Prudential Nifty Next 50 ETF',
         'Suggested %': '15%',
-        'Current Rate': '6.0% annually',
+        'Current Rate': '8.5% annually',
+      },
+
+      // Bonds & Fixed Income
+      {
+        'Type': 'Corporate Bonds',
+        'Example': 'High-rated Corporate Bonds (HDFC Ltd., Tata Motors Finance Bonds)',
+        'Suggested %': '10%',
+        'Current Rate': '7.5% annually',
       },
       {
-        'Type': 'Equity ETFs',
-        'Example': 'SBI ETF Nifty 50, HDFC Nifty ETF',
-        'Suggested %': '15%',
-        'Current Rate': '7.5% annually',
+        'Type': 'Debt Mutual Funds',
+        'Example': 'HDFC Corporate Bond Fund, ICICI Prudential Credit Risk Fund',
+        'Suggested %': '10%',
+        'Current Rate': '6.8% annually',
+      },
+
+      // Other Investments
+      {
+        'Type': 'Real Estate Investment Trusts (REITs)',
+        'Example': 'Mindspace Business Parks REIT, Brookfield India Real Estate Trust',
+        'Suggested %': '10%',
+        'Current Rate': '7.1% annually',
+      },
+      {
+        'Type': 'Gold Investments',
+        'Example': 'Sovereign Gold Bonds, Gold ETFs',
+        'Suggested %': '10%',
+        'Current Rate': 'Variable',
+      },
+      {
+        'Type': 'Public Provident Fund (PPF)',
+        'Example': 'Public Provident Fund (PPF)',
+        'Suggested %': '5%',
+        'Current Rate': '7.1% annually',
       },
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Investment Suggestions'),
+        title: Text('Medium-Risk Investment Suggestions'),
         backgroundColor: Colors.grey[900],
       ),
       body: SingleChildScrollView(
-  padding: const EdgeInsets.all(16.0),
-  child: Column(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Investment Suggestions for Low-Risk Profile',
+              'Investment Suggestions for Medium-Risk Profile',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -163,7 +171,6 @@ class InvestmentSuggestionPage extends StatelessWidget {
                           option['Type'],
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white),
-                          
                         ),
                       ),
                       Padding(

@@ -254,6 +254,12 @@ String _createSuggestions() {
       appBar: AppBar(
         title: Text("Financial Advisor"),
         backgroundColor: Color.fromARGB(255, 81, 58, 183),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushNamed(context, '/portfolio');
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.picture_as_pdf),

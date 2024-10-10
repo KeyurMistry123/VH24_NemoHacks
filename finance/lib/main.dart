@@ -1,15 +1,18 @@
 import 'package:finance/analysisrisk.dart';
 import 'package:finance/chatbot.dart';
-import 'package:finance/dashboard.dart';
 import 'package:finance/factors.dart';
 import 'package:finance/login_screen.dart';
 import 'package:finance/portfolio.dart';
 import 'package:finance/questionnaire.dart';
 import 'package:finance/registration_screen.dart';
+import 'package:finance/updated_stocks.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'factors.dart';
-
+import 'medium.dart';
+import 'highrisk.dart';
+import 'updated_stocks.dart';
+import 'userfeature.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -77,6 +80,11 @@ class MyApp extends StatelessWidget {
               '/risk_analysis': (context) => PredictionForm(), // Assuming you have a RiskAnalysisPage widget
               '/chatbot': (context) => FinancialAdviceScreen(), 
               '/portfolio': (context) => PortfolioScreen(),
+              '/lowRisk': (context) => InvestmentSuggestionApp(),
+              '/mediumRisk': (context) => MediumRiskInvestmentSuggestionPage(),
+              '/highRisk': (context) => HighRiskInvestmentSuggestionPage(),
+              '/User': (context) => PredictionsScreen (),
+
                
               // Assuming you have a ChatbotPage widget
             },
